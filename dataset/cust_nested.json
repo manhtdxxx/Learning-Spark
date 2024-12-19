@@ -1,0 +1,26 @@
+[
+    {
+        "cust_id": 1,
+        "full_name": {
+            "first_name": "Mai",
+            "last_name": "DE"
+        },
+        "city": "Lyon"
+    },
+    {
+        "cust_id": 2,
+        "full_name": {
+            "first_name": "Nam",
+            "last_name": "Nguyen"
+        },
+        "city": "Hanoi"
+    },
+    {
+        "cust_id": 3,
+        "full_name": {
+            "first_name": "Hoa",
+            "last_name": "Tran"
+        },
+        "city": "HCM"
+    }
+]
