@@ -1,12 +1,12 @@
 - **Permissive**
+	- `df = spark.read.csv("file_path", schema=..., mode="permissive")`
 	- Mặc định
 	- Nếu có record(s) lệch với schema thì gán NULL
-		- `df = spark.read.csv("file_path", schema=..., mode="permissive")`
 ---
 - **Dropmalformed**
+	-  `df = spark.read.csv("file_path", schema=..., mode="dropmalformed")`
 	- Bỏ record(s) lệch với schema
-		-  `df = spark.read.csv("file_path", schema=..., mode="dropmalformed")`
 ---
 - **Failfast**
-	- Ném lỗi nếu gặp phải record(s) lệch với schema
 	-  `df = spark.read.csv("file_path", schema=..., mode="failfast")`
+	- Ném lỗi nếu gặp phải record(s) lệch với schema

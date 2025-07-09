@@ -16,7 +16,7 @@
 		- `round(col("col_name") * 100, 2)`
 		- `lower(col("col_name"))`
 ---
+- `df = df.select("col_name", expr("SQL_EXPRESSION as col_name"), ...)`
 - `df = df.selectExpr("col_name", "SQL_EXPRESSION as col_name", ...)`
-- `df = df.select("col_name", expr(SQL_EXPRESSION as col_name), ...)`
 	- Khi muốn biến đổi các cột, cách trên biến đổi theo cách dùng methods, cách này biến đổi bằng câu lệnh SQL 
 	- Để tránh lặp lại `expr()` thì dùng `selectExpr` 

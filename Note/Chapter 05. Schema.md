@@ -25,7 +25,7 @@
 ---
  - **Manually for Nested Schema**
 	 - Xuất hiện khi đọc từ File .json
-	 - `schema_text = "key_1 dtype, key_2 struct< key_2.1 dtype key_2.2 dtype ...>, key_3 dtype, ..."`
-	 - `schema_struct = StructType([StructField("id", LongType(), False), StructField("col_name", StructType([StructField(...), ...])), ...])`
+	 - `schema_text = "key_1 dtype, key_2 struct< key_2.1 dtype, key_2.2 dtype ...>, key_3 dtype, ..."`
+	 - `schema_struct = StructType([StructField(...), StructField("col_name", StructType([StructField(...), ...])), ...])`
 
 	

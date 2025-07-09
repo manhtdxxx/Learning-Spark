@@ -19,7 +19,7 @@
 			- `df = spark.createDataFrame(list, col_names)`
 			- `df = spark.createDataFrame(list, schema_text)`
 	- List lồng Dict
-		- `list = [{"name": "A", "age": 30}, {...}]`
+		- `list = [{"name": "A", "age": 30}, {...}, ...]`
 			- `df = spark.createDataFrame(list)`
 ---
 - **Tạo DF từ RDD**
