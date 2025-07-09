@@ -4,6 +4,7 @@
 - `df = df.select(df.col_name, ...)`
 	- Dùng khi muốn chọn muốn xác định cột đến từ DF nào
 	- Khi xác định DF trước thì tên cột có thể được gợi ý
+	- Không thể truy cập cột nếu tên cột không viết liền
 ---
 - `df = df.select(df["col_name"], ...)`
 	- Dùng khi muốn chọn muốn xác định cột đến từ DF nào
@@ -13,6 +14,7 @@
 	- Khi muốn áp dụng các methods của Spark lên trên cột
 		- `col("col_name").alias("alias_name")`
 		- `col("col_name").like("...")`
+		- `count("*").alias("total_rows")`
 		- `round(col("col_name") * 100, 2)`
 		- `lower(col("col_name"))`
 ---

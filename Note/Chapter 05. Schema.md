@@ -15,7 +15,7 @@
 		- Chậm hơn cách dưới
 	---
 	- Định nghĩa Schema bằng Methods trong PySpark
-		- `from pyspark.sql.types import StructType, StructField, LongType, DateType, StringType, TimestampType...`
+		- `from pyspark.sql.types import StructType, StructField, StringType, IntergerType, DoubleType, DateType, TimestampType...`
 			- `StructType` là list tập hợp các `StructField`
 			- `StructField` mô tả thông tin `("col_name", dtype_func, Nullable)`
 		- `schema_struct = StructType([StructField("id", LongType(), False), StructField(...), ...])`
@@ -23,9 +23,9 @@
 	- `df = spark.read.csv("file_path", schema=schema_text)`
 	- `df = spark.read.csv("file_path", schema=schema_struct)`
 ---
- - **Manually for Nested Schema**
-	 - Xuất hiện khi đọc từ File .json
-	 - `schema_text = "key_1 dtype, key_2 struct< key_2.1 dtype, key_2.2 dtype ...>, key_3 dtype, ..."`
-	 - `schema_struct = StructType([StructField(...), StructField("col_name", StructType([StructField(...), ...])), ...])`
+ ### Manually for Nested Schema
+ - Xuất hiện khi đọc từ file Json, ...
+ - `schema_text = "key_1 dtype, key_2 struct< key_2.1 dtype, key_2.2 dtype ...>, key_3 dtype, ..."`
+ - `schema_struct = StructType([StructField(...), StructField("col_name", StructType([StructField(...), ...])), ...])`
 
 	

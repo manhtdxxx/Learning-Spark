@@ -30,7 +30,7 @@
 - Cách chia
 	- Khi đọc 1 file
 		- $$\max(\frac{\text{file size}}{\text{128 MB}},\ \text{number of cores})$$
-		- **128MB** là kích thước block mặc định
+		- **128MB** là kích thước block mặc định trong HDFS
 		- Spark sẽ tạo **ít nhất số partition = số core** để tận dụng song song (nếu có thể)
 		---
 	- Khi đọc nhiều file
