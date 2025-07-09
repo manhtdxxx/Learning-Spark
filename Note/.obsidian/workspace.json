@@ -1,0 +1,183 @@
+{
+  "main": {
+    "id": "56081ed9f27e2614",
+    "type": "split",
+    "children": [
+      {
+        "id": "6a81dd24cf632996",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b335721d489b3784",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Chapter 08. Ways to Access Column(s).md",
+                "mode": "preview",
+                "source": false,
+                "backlinks": false
+              },
+              "icon": "lucide-file",
+              "title": "Chapter 08. Ways to Access Column(s)"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "fb5b780a5edd5244",
+    "type": "split",
+    "children": [
+      {
+        "id": "932e9420f285ac06",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6b36d9fc699f8660",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "c35f143adf33ff82",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "21c099186ae8ea20",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "75a2bf504ca9530d",
+    "type": "split",
+    "children": [
+      {
+        "id": "5854c2f7db6235df",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d3915a9ed14cc764",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "APACHE SPARK.md",
+                "collapseAll": true,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for APACHE SPARK"
+            }
+          },
+          {
+            "id": "5c964a5a0905d2d6",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "APACHE SPARK.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from APACHE SPARK"
+            }
+          },
+          {
+            "id": "0699b5607a49c67b",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "9e14dbeb0f14fc79",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Chapter 08. Ways to Access Column(s).md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Chapter 08. Ways to Access Column(s)"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 260.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "b335721d489b3784",
+  "lastOpenFiles": [
+    "Chapter 05. Schema.md",
+    "Chapter 08. Ways to Access Column(s).md",
+    "Chapter 07. Ways to Create DF.md",
+    "Chapter 06. Read Mode.md",
+    "Chapter 04. Managed & External Table.md",
+    "Chapter 02. RDD.md",
+    "Chapter 03. DF & Temp View.md",
+    "Chapter 01. Core Concepts.md"
+  ]
+}

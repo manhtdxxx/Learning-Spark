@@ -1,0 +1,31 @@
+- **Automatically**
+	- `inferSchema`
+		- `df = spark.read.csv("file_path", inferSchema="true"`)
+		- Quét toàn bộ dataset để quyết định schema
+		- Tốn thời gian
+	---
+	- `inferSchema + samplingRatio`
+		- `df = spark.read.csv("file_path", inferSchema="true", samplingRatio=0.1)`
+		- Quét ngẫu nhiên % dataset để quyết định schema
+		- Nhanh hơn, nhưng dễ sai schema
+---
+- **Manually**
+	- Định nghĩa Schema từ Text
+		- `schema_text = "col_name dtype, col_name_2 dtype, ..."`
+		- Chậm hơn cách dưới
+	---
+	- Định nghĩa Schema bằng Methods trong PySpark
+		- `from pyspark.sql.types import StructType, StructField, LongType, DateType, StringType, TimestampType...`
+			- `StructType` là list tập hợp các `StructField`
+			- `StructField` mô tả thông tin `("col_name", dtype_func, Nullable)`
+		- `schema_struct = StructType([StructField("id", LongType(), False), StructField(...), ...])`
+	---
+	- `df = spark.read.csv("file_path", schema=schema_text)`
+	- `df = spark.read.csv("file_path", schema=schema_struct)`
+---
+ - **Manually for Nested Schema**
+	 - Xuất hiện khi đọc từ File .json
+	 - `schema_text = "key_1 dtype, key_2 struct< key_2.1 dtype key_2.2 dtype ...>, key_3 dtype, ..."`
+	 - `schema_struct = StructType([StructField("id", LongType(), False), StructField("col_name", StructType([StructField(...), ...])), ...])`
+
+	

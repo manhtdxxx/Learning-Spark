@@ -1,0 +1,10 @@
+- **Conversion between DF & Temp View for SQL**
+	- `df = spark.read.csv("file_path", ...)`
+	- `df.createOrReplaceTempView("view_name")`
+	- `df_2 = spark.sql("SELECT * FROM view_name")`
+	- `df_2 = spark.read.table("view_name")`
+- **Methods to create View**
+	- `createTempView`: dành cho tạo lần đầu, lỗi nếu tồn tại 
+	- `createGlobalTempView`: tạo ở Session này và có thể sử dụng ở Session khác, miễn là Session tạo ra nó chưa đóng
+	- `createOrReplaceTempView` 
+	- `createOrReplaceGlobalTempView`

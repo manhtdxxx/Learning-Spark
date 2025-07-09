@@ -1,0 +1,27 @@
+- **Đọc từ File**
+	- `df = spark.read.csv/parquet/...("file_path", ...)`
+---
+- **Tạo DF từ Table/View**
+	- `df = spark.sql("SELECT * FROM table_name")`
+		- Linh hoạt, có thể chọn cột
+	- `df = spark.read.table("table_name")`
+		- Cú pháp nhanh gọn
+---
+- **Tạo DF một cột `id` gồm dãy số liên tiếp**
+	- `df = spark.range(start, end, step)`
+---
+- **Tạo DF từ List**
+	- List lồng Tuple
+		- `list = [(val_1, val_2, val_3, ...), (...), ...]`
+		- `col_names = ["col_1", "col_2", "col_3", ...]`
+		- `schema_text = "col_name dtype, ..."`
+			- `df = spark.createDataFrame(list).toDF(*col_names)`
+			- `df = spark.createDataFrame(list, col_names)`
+			- `df = spark.createDataFrame(list, schema_text)`
+	- List lồng Dict
+		- `list = [{"name": "A", "age": 30}, {...}]`
+			- `df = spark.createDataFrame(list)`
+---
+- **Tạo DF từ RDD**
+	- `rdd = spark.sparkContext.textFile("file_path")`
+	- Dùng `map...` biến đổi về dạng giống List

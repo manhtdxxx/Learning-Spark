@@ -1,0 +1,29 @@
+- **Config Spark Session**
+	-  `.config("spark.sql.warehouse.dir", warehouse_dir_path)`
+	- `.enableHiveSupport()`
+- **Create temp_table**
+	- `df = spark.read.csv("file_path", ...)`
+	- `df.createOrReplaceTempView("temp_table")`
+- **Create Database**
+	- DB được lưu vào vào thư mục `warehouse_dir_path`, quản lý bởi Hive
+	- Cách tạo
+		- `spark.sql("CREATE DATABASE IF NOT EXISTS db_name")`
+	- Check
+		- `spark.sql("SHOW DATABASES").show()`
+		- `spark.sql("SHOW TABLES IN db_name").show()`
+- **Create managed_table in DB from temp_table**
+	- Table được lưu vào thư mục `warehouse_dir_path/db_name.db`
+	- Khi `DROP TABLE` sẽ xóa hết file dữ liệu
+	- Cách tạo
+		- `spark.sql("CREATE TABLE IF NOT EXISTS db_name.managed_table AS SELECT * FROM temp_table")`
+	- Check
+		- `spark.sql("DESCRIBE EXTENDED db_name.managed_table").show(1000, False)`
+- **Create external_table from File (File + Metadata)**
+	- Tạo table từ file dữ liệu có sẵn ở bất kì đâu và gán metadata
+	- Khi `DROP TABLE` sẽ chỉ xóa metadata, file dữ liệu vẫn còn
+	- Chỉ được `SELECT`
+	- Nếu không chỉ định `db_name`, mặc định lưu vào DB `default`
+	- Cách tạo
+		- `spark.sql("""CREATE EXTERNAL TABLE db_name.external_table (col_name dtype, ...) USING CSV/PARQUET... OPTIONS (path "file_path" ...)""")`
+	- Check
+		- `spark.sql("DESCRIBE EXTENDED db_name.external_table").show(1000, False)`
