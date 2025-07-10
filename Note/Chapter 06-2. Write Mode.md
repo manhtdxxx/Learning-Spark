@@ -1,5 +1,6 @@
 > - Với Read, Spark có thể đọc 1 file hoặc 1 folder gồm nhiều files
 > - Với Write, Spark chỉ có thể ghi xuống thành 1 folder tập hợp các files = số partitions
+---
 
 - **Overwrite**
 	- `df.write.csv("folder_path").mode("overwrite").option(..., ...) ...`
