@@ -118,7 +118,7 @@
 		- 4 MB overhead là chi phí Spark tính cho metadata mỗi file (tên file, đường dẫn file, loại file, ...)
 		- Spark gom nhiều file nhỏ vào 1 partition nếu cần, hoặc chia đều nếu file lớn
 		- Nếu file nhỏ mà nhiều → có thể tạo quá nhiều partition → gây overhead quản lý task
- ---
+	 ---
 - **Check số partitions**
 	- `rdd.getNumPartitions()`
 	- `df.rdd.getNumPartitions()`
@@ -129,7 +129,7 @@
 - **Giảm số partitions**
 	- Dùng `coalesce()`, không gây shuffle, cố gắng gộp partitions trong cùng 1 executor lại
 	- Có thể dùng `repartition()`, gây shuffle
-	
+---
 # 7. Executor
 - VD 1 worker node có tài nguyên gồm 16 cores, 64GB ram
 

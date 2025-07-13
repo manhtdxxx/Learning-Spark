@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Chapter 14. File Format.md",
+                "file": "Chapter 01. Core Concepts.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Chapter 14. File Format"
+              "title": "Chapter 01. Core Concepts"
             }
           }
         ]
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Chapter 14. File Format.md",
+                "file": "Chapter 01. Core Concepts.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Chapter 14. File Format"
+              "title": "Outline of Chapter 01. Core Concepts"
             }
           }
         ],
@@ -170,10 +170,10 @@
   },
   "active": "b335721d489b3784",
   "lastOpenFiles": [
+    "Chapter 14. File Format.md",
     "Chapter 06-2. Write Mode.md",
     "Chapter 09. Cache & Persist.md",
     "Chapter 10. Skew Partition.md",
-    "Chapter 14. File Format.md",
     "Chapter 11. Types of Join.md",
     "Chapter 13. Logical & Physical Plan.md",
     "Chapter 12. RAM in Executor.md",
