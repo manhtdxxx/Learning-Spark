@@ -13,13 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Chapter 01. Core Concepts.md",
+                "file": "Chapter 14. File Format.md",
                 "mode": "preview",
-                "source": false,
-                "backlinks": false
+                "source": false
               },
               "icon": "lucide-file",
-              "title": "Chapter 01. Core Concepts"
+              "title": "Chapter 14. File Format"
             }
           }
         ]
@@ -143,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Chapter 01. Core Concepts.md",
+                "file": "Chapter 14. File Format.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Chapter 01. Core Concepts"
+              "title": "Outline of Chapter 14. File Format"
             }
           }
         ],
@@ -171,14 +170,22 @@
   },
   "active": "b335721d489b3784",
   "lastOpenFiles": [
-    "Chapter 08. Ways to Access Column(s).md",
-    "Chapter 01. Core Concepts.md",
     "Chapter 06-2. Write Mode.md",
+    "Chapter 09. Cache & Persist.md",
+    "Chapter 10. Skew Partition.md",
+    "Chapter 14. File Format.md",
+    "Chapter 11. Types of Join.md",
+    "Chapter 13. Logical & Physical Plan.md",
+    "Chapter 12. RAM in Executor.md",
     "Chapter 07. Ways to Create DF.md",
-    "Chapter 05. Schema.md",
     "Chapter 04. Managed & External Table.md",
+    "Chapter 05. Schema.md",
+    "Chapter 01. Core Concepts.md",
     "Chapter 02. RDD.md",
     "Chapter 03. DF & Temp View.md",
-    "Chapter 06-1. Read Mode.md"
+    "Chapter 06-1. Read Mode.md",
+    "Chapter 08. Ways to Access Column(s).md",
+    "Untitled",
+    "Untitled/Untitled.md"
   ]
 }

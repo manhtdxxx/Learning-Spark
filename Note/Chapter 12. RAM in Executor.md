@@ -1,0 +1,28 @@
+### Heap Memory (JVM)
+- Config: `spark.executor.memory = ...`
+- JVM có cơ chế Garbage Collection (GC) tự động khi đầy. Tuy nhiên GC thường xuyên sẽ ảnh hưởng tới việc thực thi task
+- Cấu trúc:
+	- ***Reserved Memory***
+		- Default là 300MB
+		- Duy trì ổn định cho JVM khi có phát sinh
+		- JVM quản lý
+	- ***User Memory***
+		- Thường chiếm 25 - 40% của (Heap - Reserved)
+		- Nơi lưu trữ các variables; objects; kết quả từ UDFs do người dùng tạo ra
+		- Spark không quản lý, để JVM quản lý, dọn bởi GC
+	- ***Unified Memory***
+		- Config: `spark.memory.fraction=...`
+		- Thường chiếm 60 - 75% của (Heap - Reserved)
+		- Do Spark quản lý (dynamic allocation, eviction, spilling, ...)
+		- *Execution Memory*
+			- Dùng cho tính toán cho transformation, shuffle ...
+			- Có thể lấy thêm từ storage memory, kể cả khi sm đầy
+			- Khi task kết thúc, giải phóng memory
+		- *Storage Memory*
+			- Config: `spark.memory.storageFraction=...`
+			- Dùng cho lưu trữ cho cached data, broadcast variables ...
+			- Có thể lấy thêm từ execution memory chỉ em nó dư
+			- Khi memory này đầy thì có thể thực hiện GC hoặc lưu xuống disk (spilling)
+---
+### Off-heap Memory
+- Max(384MB, 10% heap memory)

@@ -24,4 +24,4 @@
 ---
 - **Tạo DF từ RDD**
 	- `rdd = spark.sparkContext.textFile("file_path")`
-	- Dùng `map...` biến đổi về dạng giống List
+	- Dùng `map(), ...` biến đổi về dạng giống List

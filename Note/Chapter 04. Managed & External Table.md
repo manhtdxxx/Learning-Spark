@@ -17,7 +17,7 @@
 	- Cách tạo
 		- `spark.sql("CREATE TABLE IF NOT EXISTS db_name.managed_table AS SELECT * FROM temp_table")`
 	- Check
-		- `spark.sql("DESCRIBE EXTENDED db_name.managed_table").show(1000, False)`
+		- `spark.sql("DESCRIBE EXTENDED db_name.managed_table").show(100, False)`
 - **Create external_table from File (File + Metadata)**
 	- Tạo table từ file dữ liệu có sẵn ở bất kì đâu và gán metadata
 	- Khi `DROP TABLE` sẽ chỉ xóa metadata, file dữ liệu vẫn còn
@@ -26,4 +26,4 @@
 	- Cách tạo
 		- `spark.sql("""CREATE EXTERNAL TABLE db_name.external_table (col_name dtype, ...) USING CSV/PARQUET... OPTIONS (path "file_path" ...)""")`
 	- Check
-		- `spark.sql("DESCRIBE EXTENDED db_name.external_table").show(1000, False)`
+		- `spark.sql("DESCRIBE EXTENDED db_name.external_table").show(100, False)`

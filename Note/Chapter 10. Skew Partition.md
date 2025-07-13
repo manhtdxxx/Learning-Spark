@@ -1,0 +1,30 @@
+- Spark mặc định khi shuffle thì sẽ chia 200 partitions → 200 tasks
+- Khi ta dùng `groupBy`, `join`, ... thì các records cùng key sẽ được đưa về chung 1 partition → có 10 keys thì chỉ có 10 partitions có dữ liệu
+- Vấn đề xuất hiện:
+	- 190 partitions còn lại không có dữ liệu → 190 tasks vẫn chạy dù không làm gì → tăng overhead cho việc quản lý tasks
+	- Trong 10 partitions có dữ liệu, có thể có một vài key(s) có lượng records vượt trội hơn so với các keys còn lại → một vài tasks đó phải thực hiện lâu hơn
+---
+- **Broadcast Join**
+	- Dùng khi join giữa 1 bảng lớn và 1 bảng nhỏ
+	- Bảng nhỏ sẽ được nhân bản và gửi tới tất cả executions
+	- Các partitions của bảng lớn sẽ join với bản sao của bảng nhỏ đó 
+	- Việc join sẽ thực hiện tại chỗ mà không cần phải shuffle
+	---
+- **Salting**
+	- Tạo thêm 1 cột `salt` và concat với cột `key` thành cột `salted_key`
+	- Ví dụ khi `key` A có lượng records lớn, ta cần thêm cột `salted_key` chứa giá trị `A_0, A_1, A_2, ...`; sau đó `.groupBy("salted_key")` để giảm skewness, tránh quá tải một vài partitions; cuối cùng `.groupBy("key")` để lấy kết quả cuối cùng
+	- Tuy phải shuffle tới 2 lần, nhưng lần 2 sẽ nhanh hơn vì dữ liệu đã được aggregated theo `salted_key` nên số lượng dữ liệu cần shuffle sẽ ít hơn
+	- Cách làm
+		- `skewedKeys = [...]`
+		- `saltedDF = df.withColumn("salt", when(col("key").isin(skewedKeys), (rand() * 5).cast("int")).otherwise(lit(0)))`
+		- `saltedDF = saltedDF.withColumn("salted_key", when(col("salt")==0, col("key")).otherwise(concat_ws("_", col("key"), col("salt")))`
+		- `partialAgg = saltedDF.groupBy("salted_key", "key").agg(...)`
+		- `finalAgg = partialAgg.groupBy("key").agg(...)`
+---
+- **Adaptive Query Execution (AQE)**
+	- `spark.conf.set("spark.sql.adaptive.enabled", True)`
+	- Tự bật nếu dùng Spark 3.2+
+	- Spark tự động phát hiện skew và
+		- Thay đổi chiến lược Join
+		- Giảm lượng partitions khi shuffle nếu thấy không cần thiết
+		- Chia nhỏ partition to thành các partitions nhỏ, đồng nghĩa với việc 1 key mà có lượng records lớn có thể nằm trên nhiều partition

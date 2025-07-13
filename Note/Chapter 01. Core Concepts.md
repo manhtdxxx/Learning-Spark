@@ -8,16 +8,17 @@
 - **Data Processing (MapReduce, Spark)**
 	- Kiến trúc Spark
 		- Là 1 Cluster gồm nhiều Nodes
-		- Theo Client Mode, Spark Driver chạy ngoài Cluster, tất cả các Nodes đều là Worker Nodes
-		- Theo Cluster Mode, 1 Node được gọi là ***Driver Node*** nếu có Spark Driver chạy trên đó
+		- ***Theo Client Mode***, Spark Driver chạy ngoài Cluster, tất cả các nodes đều là Worker Nodes `spark-submit --deploy-mode client ...`
+		- ***Theo Cluster Mode***, Spark Driver nằm bên trong Cluster, chạy trên 1 node riêng biệt, gọi là ***Driver Node***, có vai trò:
 			- Tạo Spark Session / Spark Context để khởi tạo ứng dụng
 			- Tạo DAG, phân chia stage/task, và gửi tới Executor để thực thi
-			- Theo dõi tiến trình, nhận kết quả, xử lý lỗi, retry task của Executor
-		- Các node còn lại là ***Worker Nodes***, chịu trách nhiệm chạy các tiến trình Executors để xử lý dữ liệu
+			- Theo dõi tiến trình, tổng hợp kết quả từ các Executor
+		- ***Worker Nodes*** chịu trách nhiệm chạy các tiến trình Executors để thực thi tasks
 			- Nếu dùng Standalone, Worker Node chủ yếu để chạy Executor(s)
 			- Nếu dùng Yarn, Worker Node có thể chạy nhiều thứ: Node Manager, Executors, Application Master, ...
 		- Mỗi ***Executor*** thực thi các tasks song song, với số lượng task đồng thời phụ thuộc vào số core được cấp phát cho Executor đó
-- **Resource Management (Yarn, Standalone - riêng Spark, ...)**
+- **Resource Management (Yarn, Standalone, Yarn, Mesos, Kubernetes)**
+	- Standalone là Resource Management của chính Spark khi không phụ thuộc vào các bên khác, nằm bên trong Spark Cluster, chạy trên 1 Node riêng biệt, gọi là Master Node / Cluster Manager
 	- Kiến trúc Yarn
 		- ***Resource Manager***
 			- Quản lý tài nguyên toàn bộ Cluster, nằm trên Master Node
@@ -26,8 +27,8 @@
 			- 1 Node Manager chạy trên 1 Worker Node
 			- Chọn 1 Node bất kỳ, Node Manager khởi chạy Container cho Application Master
 				- Nếu Cluster Mode, AM nằm ở Driver Node
-				- Nếu Client Mode, AM nằm ở Worker Node
-			- Đối với các Worker Node còn lại, Node Manager sẽ nhận lệnh từ Resource Manager do Application Master yêu cầu và thực hiện phân bổ Container cho Executor `-- thông thường, 1 Executor ứng với 1 Container để tránh cạnh tranh tài nguyên --`
+				- Nếu Client Mode, AM nằm riêng trên 1 Worker Node
+			- Đối với các Worker Nodes còn lại, Node Manager sẽ nhận lệnh từ Resource Manager do Application Master yêu cầu và thực hiện phân bổ Container cho Executor `-- thông thường, 1 Executor ứng với 1 Container để tránh cạnh tranh tài nguyên --`
 			- Giám sát, báo cáo trạng thái tài nguyên của Container cục bộ về cho Resource Manager `-- vd: node 2 có 3 containers, mỗi container dùng 2 Cores và 1GB RAM --`
 		- ***Application Master***
 			- AM là lớp trung gian giữa Yarn và ứng dụng
@@ -62,7 +63,7 @@
 		- Là 1 Entry Point để làm việc với Structured Data trong Spark 1.x, cho phép thực thi các truy vấn SQL và làm việc với DataFrame
 		- Trong Spark 2.0+, SQLContext đã được thay thế bởi SparkSession
 	- ***Hive Context***
-		- Là một phiên bản mở rộng của SQL Context trong Spark 1.x, giúp
+		- Là một phiên bản mở rộng của SQLContext trong Spark 1.x, giúp
 			- Hỗ trợ kết nối với Hive Metastore
 			- Thực thi SQL truy vấn trên Hive Table
 		- Trong Spark 2.0+, chức năng của HiveContext được tích hợp vào SparkSession khi config `.enableHiveSupport()`
@@ -70,14 +71,14 @@
 # 4. Lazy Evaluation
 - **Transformation**
 	- ***Narrow Transformation***
-		- Dữ liệu được transform tại chính partition nó ở, không có hiện tượng dữ liệu trao đổi giữa các Executors hay Nodes
-		- Không có hiện tượng shuffle, nên narrow này nhanh và tốn ít tài nguyên hơn wide
-		- Methods: `map(), flatMap(), filter(), sample(), ...`
+		- Dữ liệu được transform tại chính partition nó ở, không có hiện tượng dữ liệu trao đổi giữa các Executors/Nodes
+		- Không có shuffle, nên narrow này nhanh và tốn ít tài nguyên hơn wide
+		- Methods: `map(), flatMap(), filter(), join(broadcast()), ...`
 	- ***Wide Transformation***
-		- Dữ liệu sau khi transform sẽ được phân phối lại thành các partitions mới giữa các Executors hay Nodes
+		- Dữ liệu sau khi transform sẽ được phân phối lại thành các partitions mới giữa các Executors/Nodes
 		- Shuffle là bước tốn thời gian và tài nguyên bởi dữ liệu phải được ghi ra disk, truyền qua mạng, đọc lại từ disk
 		- Khi shuffle xảy ra, Stage mới được hình thành
-		- Methods: `reduceByKey(), sortByKey(), distinct(), join(), ...`
+		- Methods: `reduceByKey(), sortByKey(), distinct(), join(), groupBy(), ...`
 - **Action**
 	- Là các methods kích hoạt các transformations đã định nghĩa
 	- Lúc này, Spark sẽ áp dụng Lazy Evaluation, xây dựng 1 DAG sắp xếp các transformations theo một thứ tự tối ưu nhất có thể trước khi thực hiện
@@ -90,11 +91,11 @@
 	- Job được chia thành các stages `1 stage = 1 group of transformations until shuffle`
 	- Stages lại được chia tiếp thành các tasks `1 task = 1 partition`
  - **Quy trình xử lý của Spark khi tích hợp với Yarn**
-	1. Người dùng viết ứng dụng Spark và dùng `spark-submit` để gửi job lên YARN Resource Manager
+	1. Người dùng viết ứng dụng Spark và dùng `spark-submit` để gửi job lên Yarn Resource Manager
 	2. RM nhận yêu cầu, kiểm tra khả năng cấp tài nguyên
 	3. Nếu OK, chọn 1 Node, Node Manager trên Node đó, khởi tạo 1 container để chạy Application Master
 	4. Spark Driver khởi tạo Spark Context, chứa cấu hình tĩnh `(--num-executors, --executor-cores, --executor-memory)`
-	5. AM gửi yêu cầu xin tài nguyên (CPU, RAM, ...) đến RM.
+	5. AM gửi yêu cầu xin tài nguyên (CPU, RAM, ...) đến RM
 	6. RM gửi yêu cầu tới NM trên các Nodes khác để khởi tạo Container cho Executor
 	7. Khi kích hoạt action, lập DAG, chia tasks xong thì Driver phân phối các task xuống các Executor
 		- Nếu task treo nhiều, AM xin thêm tài nguyên từ RM
@@ -105,7 +106,7 @@
 	11. Khi Job hoàn tất, AM gửi tín hiệu tới RM để giải phóng tài nguyên
 ---
 # 6. Partition
-- File nén như gz, ... -> non-splittable
+- File nén như gz, ... → non-splittable
 - **Cách chia file thành partitions**
 	- ***Khi đọc 1 file***
 		- $$\max(\frac{\text{file size}}{\text{128 MB}},\ \text{number of cores})$$
@@ -118,10 +119,33 @@
 		- Spark gom nhiều file nhỏ vào 1 partition nếu cần, hoặc chia đều nếu file lớn
 		- Nếu file nhỏ mà nhiều → có thể tạo quá nhiều partition → gây overhead quản lý task
  ---
-- Check số partitions
+- **Check số partitions**
 	- `rdd.getNumPartitions()`
 	- `df.rdd.getNumPartitions()`
-- Chia lại (Shuffle lại toàn bộ partitions cũ qua mới → tốn kém )
-	- `rdd_2 = rdd.repartition(n_partitions)`
-	- `df_2 = df.repartition(n_partitions)`
+- **Tăng số partitions**
+	- Dùng `repartition()`, sẽ xảy ra shuffle
+		- `rdd_2 = rdd.repartition(n_partitions)`
+		- `df_2 = df.repartition(n_partitions)`
+- **Giảm số partitions**
+	- Dùng `coalesce()`, không gây shuffle, cố gắng gộp partitions trong cùng 1 executor lại
+	- Có thể dùng `repartition()`, gây shuffle
 	
+# 7. Executor
+- VD 1 worker node có tài nguyên gồm 16 cores, 64GB ram
+
+| Tiêu chí                    | Thin Executor                                                  | Fat Executor                                     |
+| --------------------------- | -------------------------------------------------------------- | ------------------------------------------------ |
+| **Số executors**            | 16 executors                                                   | 1 executors                                      |
+| **Cores/executor**          | 1 core/executor                                                | 16 cores/executor                                |
+| **RAM/executor**            | 4 GB/executor                                                  | 64 GB/executor                                   |
+| **Số tasks song song**      | 16 tasks                                                       | 16 tasks                                         |
+| **Overhead**                | Cao do nhiều executor → lãng phí tài nguyên quản lý            | Thấp hơn ...                                     |
+| **Garbage Collection (GC)** | GC nhanh, pause ngắn nhờ ít ram/executor                       | GC chậm, pause dài → làm chậm việc thực thi task |
+| **Shuffle**                 | Nhiều shuffle do ít task/executor → tăng disk I/O, tắc network | Ít shuffle, ...                                  |
+| **Fault tolerance**         | Tốt hơn, lỗi 1 executor → mất ít task, ít tính toán lại        | Kém hơn, ...                                     |
+| **Phù hợp cho**             | Workload có nhiều task nhỏ, ít shuffle, parallelism cao        | Workload nặng (như ML), join phức tạp            |
+
+- Thông thường, ta sẽ mất 1 core, 1GB ram cho OS → còn lại 15 cores, 63GB ram
+- Theo khuyến nghị, số cores tối ưu cho 1 executor là 5
+	- 3 executors
+	- mỗi executor gồm 5 cores, 21GB ram

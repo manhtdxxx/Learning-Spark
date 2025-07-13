@@ -1,0 +1,31 @@
+- Ví dụ:
+	- `df = spark.read ...`
+	- `df2 = df.transform1()`
+	- `df3 = df2.transform2().cache()`
+	- `df3.action1()`
+	- `df3.action2()`
+---
+- **Stage Skipped**
+	- Spark sử dụng Lazy Evaluation, chỉ khi gọi action thì Spark mới bắt đầu thực hiện các transformation. 
+	- Sau 1 action, Spark lưu kết quả tạm thời của các stage trong memory của executor
+	- Đây không phải do `.cache()`, mà là do GC chưa chạy để dọn bộ nhớ hoặc Executor chưa bị kill → không hiệu quả lâu dài
+	- Nếu ngay sau đó, bạn gọi 1 action khác sử dụng cùng DF, Spark có thể reuse lại stage đã tính
+---
+- **Cache**
+	- `.cache()` là Lazy, chỉ thực hiện sau khi gọi action lần đầu
+	- Nếu dùng `.cache()` cho DF ở 1 bước transformation nhất định, Spark sẽ lưu trữ lâu dài trong memory cho việc tái sử dụng cho các action lần sau
+	- Chỉ nên dùng `.cache()` khi
+		- DF mà được gọi action nhiều lần
+		- Bước transform phức tạp, tốn thời gian
+		- Dữ liệu nhỏ, chiếm ít Ram
+	- Lạm dụng `.cache()` sẽ tốn Ram, dẫn tới hiện tượng OOM (Out of Memory)
+---
+- **Persist**
+	- `.cache() = .persist(StorageLevel.MEMORY_AND_DISK)`: nếu hết Ram, spill xuống Disk
+	- Dùng khi muốn kiểm soát kiểu lưu trữ
+	- Khi dữ liệu quá lớn, nên dùng 
+		-  `.persist(StorageLevel.MEMORY_AND_DISK_SER)`: dữ liệu được serialized (nén thành binary) để giảm size → tiết kiệm Ram, đánh đổi chậm vì dữ liệu cần được giải nén trước khi đọc và tính toán
+		- `.persist(StorageLevel.DISK_ONLY)`: chậm nhất vì dữ liệu được đọc từ Disk
+---
+- Muốn coi các DF được lưu trữ trên Ram thì click tab Storage trên Spark UI `localhost:4040/storage/`
+- Khi không muốn lưu trữ DF trên Ram nữa, dùng `df.unpersist()`

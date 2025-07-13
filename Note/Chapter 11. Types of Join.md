@@ -1,0 +1,64 @@
+- Loại Join được đặt tên theo cách
+	- ***Distributed Strategy***
+		- Broadcast
+		- Shuffle
+	- ***Join Type***
+		- Hash
+		- Sort Merge
+---
+- **Broadcast Hash Join**
+	- ***Cách dùng:***
+		- `df = df_large.join(broadcast(df_small), on=..., how=..)`
+		- `df = df_large.join(df_small.hint("broadcast"), on=..., how=...)`
+		- Check: `df.explain()`
+	- ***Quy trình:***
+		- Bảng nhỏ `small` sẽ được nhân bản và gửi đầy đủ (không chia partitions nhé) tới tất cả executors → 1 bản sao/executor
+		- Mỗi partitions của bảng to `large` sẽ join với bản sao `small` đó → tránh shuffle
+		- Trên mỗi executor, Spark xây 1 Hash Table dựa trên bản sao `small` gồm hash(key), record ứng với key đó
+		- Spark sẽ scan bảng lớn `large`, tính hash(key) của từng record và tìm vào Hash Table để tìm hash(key) phù hợp
+		- Nếu tìm thấy, join thành công
+	- ***Đánh giá:***
+		- Nên dùng khi Join giữa 1 bảng lớn và 1 bảng nhỏ
+		- Tránh được Shuffle
+		- Nếu bảng `small` quá nhiều dữ liệu thì tốn RAM, gây OOM cho Executor
+	---
+- **Shuffle Sort Merge Join**
+	- ***Cách dùng:***
+		- `df = df_large1.hint("merge").join(df_large2.hint("merge"), ...)`
+	- ***Quy trình:***
+		- Shuffle theo hash(key) → phân vùng tốt hơn, biết chính xác nếu key có giá trị ... thì nên vào partitions ...
+		- Sau shuffle, trong mỗi partition, dữ liệu của của 2 bảng đã có cùng key
+		- Trong mỗi partition, Spark sắp xếp records theo giá trị key → tránh phải full scan để so khớp key
+		- 2 bảng sẽ được join nhanh hơn khi records được sắp xếp
+	- ***Đánh giá:***
+		- Nên dùng khi Join giữa các bảng lớn
+		- Chi phí Shuffle và Sort cao
+		- Tiết kiệm RAM khi không sử dụng Hash Table
+	---
+- **Shuffle Hash Join**
+	- ***Cách dùng:***
+		- `df = df_large.hint("shuffle_hash").join(df_medium.hint("shuffle_hash"), ...)`
+	- ***Quy trình:***
+		- Bước shuffle giống trên
+		- Khi Join, sử dụng Hash Table thay vì Sort Merge
+	- ***Đánh giá:***
+		- Nên dùng khi Join giữa 1 bảng lớn và 1 bảng trung bình
+		- Chi phí Shuffle cao
+		- Tốn RAM khi lưu thêm Hash Table
+		- Join nhanh hơn nếu Hash Table nhỏ hơn
+---
+### Optimization for Joining 2 large tables
+- Sử dụng `.bucketBy` khi ghi file, ta có thể tránh việc shuffle lúc Join
+- Phải kết hợp với `.saveAsTable()` để biến DF thành Table, do cần quản lý thêm metadata (số lượng buckets, bucket ở cột nào, ...)
+- Nếu dùng thêm `.option("path", ...)` thì lưu dưới dạng External Table
+- ***Ví dụ:***
+	- `customer_df.write.bucketBy(8, "customer_id").sortBy("customer_id").option("path", ...).saveAsTable("customer_table")`
+	- `order_df.write.bucketBy(8, "customer_id").sortBy("customer_id").option("path", ...).saveAsTable("order_table")`
+		- `customer_table = spark.read.table("customer_table")`
+		- `order_table = spark.read.table("order_table")`
+			- `result = order_table.join(customer_table, on="customer_id", how=...)`
+- ***Quy trình:***
+	- Mỗi DF được chia dữ liệu thành 8 buckets dựa trên `hash(customer_id)`
+	- Nhờ `hash()`, bucket thứ 1 của `df_customers` sẽ chỉ gồm `customer_id` giống với bucket thứ 1 của `df_orders`. Tương tự với các buckets còn lại
+	- Sau đó, mỗi bucket sẽ được sắp xếp lại theo giá trị của `customer_id` để tối ưu cho Join
+	- Khi Join, Spark sẽ không thực hiện shuffle, chỉ cần map bucket thứ ... của `customer_table` với bucket thứ ... của `order_table`
