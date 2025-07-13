@@ -8,8 +8,8 @@
 - **Data Processing (MapReduce, Spark)**
 	- Kiến trúc Spark
 		- Là 1 Cluster gồm nhiều Nodes
-		- ***Theo Client Mode***, Spark Driver chạy ngoài Cluster, tất cả các nodes đều là Worker Nodes `spark-submit --deploy-mode client ...`
-		- ***Theo Cluster Mode***, Spark Driver nằm bên trong Cluster, chạy trên 1 node riêng biệt, gọi là ***Driver Node***, có vai trò:
+		- ***Theo Client Mode***, Spark Driver chạy ngoài Cluster, nằm ở trên máy thực thi `spark-submit --deploy-mode client`, tất cả các nodes đều là Worker Nodes 
+		- ***Theo Cluster Mode***, Spark Driver nằm bên trong Cluster, chạy trên 1 node riêng biệt do Cluster Manager phân bổ, gọi là ***Driver Node***, có vai trò:
 			- Tạo Spark Session / Spark Context để khởi tạo ứng dụng
 			- Tạo DAG, phân chia stage/task, và gửi tới Executor để thực thi
 			- Theo dõi tiến trình, tổng hợp kết quả từ các Executor
@@ -25,16 +25,15 @@
 			- Chấp nhận hoặc từ chối yêu cầu từ Application Master cho việc cấp phát tài nguyên (CPU, RAM, ...)
 		- ***Node Managers***
 			- 1 Node Manager chạy trên 1 Worker Node
-			- Chọn 1 Node bất kỳ, Node Manager khởi chạy Container cho Application Master
-				- Nếu Cluster Mode, AM nằm ở Driver Node
-				- Nếu Client Mode, AM nằm riêng trên 1 Worker Node
-			- Đối với các Worker Nodes còn lại, Node Manager sẽ nhận lệnh từ Resource Manager do Application Master yêu cầu và thực hiện phân bổ Container cho Executor `-- thông thường, 1 Executor ứng với 1 Container để tránh cạnh tranh tài nguyên --`
+			- Node Manager sẽ cấp phát
+				- 1 container cho Application Master
+				- Nhiều containers cho Executors `-- thông thường, 1 Executor ứng với 1 Container để tránh cạnh tranh tài nguyên --`
 			- Giám sát, báo cáo trạng thái tài nguyên của Container cục bộ về cho Resource Manager `-- vd: node 2 có 3 containers, mỗi container dùng 2 Cores và 1GB RAM --`
 		- ***Application Master***
-			- AM là lớp trung gian giữa Yarn và ứng dụng
-			- Mỗi ứng dụng sẽ có 1 AM riêng
-			- Resource/Node Manager chỉ là người quản lý và cấp phát tài nguyên, không có nhu cầu phải hiểu logic của từng loại app  (cách sử dụng tài nguyên)  → xuất hiện AM
-			- Analogy: "tao biết app cần gì, tao xin container cho phù hợp!"
+			- AM do Resource Manager khởi tạo riêng cho mỗi ứng dụng, là thứ giúp ứng dụng giao tiếp được với YARN
+			- Tại sao cần?
+				- Resource/Node Manager chỉ là người quản lý và cấp phát tài nguyên, không có nhu cầu phải hiểu logic của từng loại app  (cách sử dụng tài nguyên)  → xuất hiện AM
+				- Analogy: "tao biết app cần gì, tao xin container cho phù hợp!"
 			- Theo dõi trạng thái của toàn bộ Executors thuộc cùng ứng dụng ở cấp độ Container. Coi xem Executor nào chết để xin thêm tài nguyên `-- vd: executor 1 ở node 2 bị kill vì thiếu RAM --`
 			- Trong Cluster Mode, AM và Spark Driver cùng chia sẻ 1 Container
 		- ***Container***
@@ -93,11 +92,11 @@
  - **Quy trình xử lý của Spark khi tích hợp với Yarn**
 	1. Người dùng viết ứng dụng Spark và dùng `spark-submit` để gửi job lên Yarn Resource Manager
 	2. RM nhận yêu cầu, kiểm tra khả năng cấp tài nguyên
-	3. Nếu OK, chọn 1 Node, Node Manager trên Node đó, khởi tạo 1 container để chạy Application Master
+	3. Nếu khả thi, RM chọn 1 node, Node Manager sẽ khởi tạo 1 container để chạy Application Master
 	4. Spark Driver khởi tạo Spark Context, chứa cấu hình tĩnh `(--num-executors, --executor-cores, --executor-memory)`
-	5. AM gửi yêu cầu xin tài nguyên (CPU, RAM, ...) đến RM
-	6. RM gửi yêu cầu tới NM trên các Nodes khác để khởi tạo Container cho Executor
-	7. Khi kích hoạt action, lập DAG, chia tasks xong thì Driver phân phối các task xuống các Executor
+	5. AM gửi yêu cầu xin tài nguyên đến RM
+	6. RM gửi yêu cầu tới NM trên các nodes còn lại để khởi tạo container cho executor
+	7. Khi kích hoạt action, lập DAG, chia tasks xong thì Driver phân phối các task xuống các executor
 		- Nếu task treo nhiều, AM xin thêm tài nguyên từ RM
 		- Nếu task ít, AM sẽ thông báo cho RM giải phóng bớt tài nguyên
 	8. Executor thực hiện các task
