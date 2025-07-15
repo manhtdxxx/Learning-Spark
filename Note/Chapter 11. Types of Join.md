@@ -26,7 +26,7 @@
 	- ***Cách dùng:***
 		- `df = df_large1.hint("merge").join(df_large2.hint("merge"), ...)`
 	- ***Quy trình:***
-		- Shuffle theo hash(key) → phân vùng tốt hơn, biết chính xác nếu key có giá trị ... thì nên vào partitions ...
+		- Shuffle theo hash(key) → phân vùng tốt hơn, biết chính xác nếu key có giá trị ... thì nên vào partition thứ ...
 		- Sau shuffle, trong mỗi partition, dữ liệu của của 2 bảng đã có cùng key
 		- Trong mỗi partition, Spark sắp xếp records theo giá trị key → tránh phải full scan để so khớp key
 		- 2 bảng sẽ được join nhanh hơn khi records được sắp xếp
