@@ -17,7 +17,7 @@
 			- Nếu dùng Standalone, Worker Node chủ yếu để chạy Executor(s)
 			- Nếu dùng Yarn, Worker Node có thể chạy nhiều thứ: Node Manager, Executors, Application Master, ...
 		- Mỗi ***Executor*** thực thi các tasks song song, với số lượng task đồng thời phụ thuộc vào số core được cấp phát cho Executor đó
-- **Resource Management (Yarn, Standalone, Yarn, Mesos, Kubernetes)**
+- **Resource Management (Yarn, Standalone, Mesos, Kubernetes)**
 	- Standalone là Resource Management của chính Spark khi không phụ thuộc vào các bên khác, nằm bên trong Spark Cluster, chạy trên 1 Node riêng biệt, gọi là Master Node / Cluster Manager
 	- Kiến trúc Yarn
 		- ***Resource Manager***
